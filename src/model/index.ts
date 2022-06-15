@@ -7,9 +7,9 @@ export interface User {
   hobbies: string[];
 }
 
-type UserData = Omit<User, "id">;
+export type UserData = Omit<User, "id">;
 
-export default class Users {
+class UsersModel {
   #db: User[] = [];
 
   getAll = () => this.#db;
@@ -19,13 +19,14 @@ export default class Users {
   create = (userData: UserData) => {
     const newUser = { ...userData, id: uuidv4() };
     this.#db.push(newUser);
+
     return newUser;
   };
 
   update = (id: string, userData: UserData) => {
     this.#db = this.#db.map((user) => {
       if (id === user.id) {
-        return { id, ...userData };
+        return { ...user, ...userData, id };
       }
       return user;
     });
@@ -37,3 +38,5 @@ export default class Users {
     this.#db = this.#db.filter((user) => user.id !== userId);
   };
 }
+
+export const usersModel = new UsersModel();
