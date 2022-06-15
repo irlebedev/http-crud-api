@@ -1,4 +1,4 @@
-import { IncomingMessage } from "http";
+import { IncomingMessage, ServerResponse } from "http";
 import { UserData } from "../model";
 
 export const getRequestBody = (req: IncomingMessage) => {
@@ -26,4 +26,10 @@ export const isValidUserData = (data: any): data is UserData => {
     return true;
   }
   return false;
+};
+
+export const errorHandler = (error: unknown, res: ServerResponse) => {
+  console.log(error);
+  res.writeHead(500);
+  return res.end("internal server error");
 };

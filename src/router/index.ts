@@ -25,4 +25,7 @@ export const router = (req: IncomingMessage, res: ServerResponse) => {
     const id = req.url.split("/")[3];
     return userController.deleteUser(id, res);
   }
+
+  res.writeHead(404);
+  return res.end("resource not found");
 };

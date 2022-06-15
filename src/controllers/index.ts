@@ -1,7 +1,7 @@
 import { ServerResponse, IncomingMessage } from "http";
 import { validate } from "uuid";
 import { usersModel } from "../model/index";
-import { getRequestBody, isValidUserData } from "../utils";
+import { errorHandler, getRequestBody, isValidUserData } from "../utils";
 
 class UserController {
   getAllUsers = (res: ServerResponse) => {
@@ -11,7 +11,7 @@ class UserController {
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(JSON.stringify(users));
     } catch (error) {
-      console.log(error); // todo прописать возврат ошибок в res.end()
+      errorHandler(error, res);
     }
   };
 
@@ -34,7 +34,7 @@ class UserController {
       res.writeHead(400);
       return res.end(`userId=${id} is invalid`);
     } catch (error) {
-      console.log(error); // todo прописать возврат ошибок в res.end()
+      errorHandler(error, res);
     }
   };
 
@@ -53,7 +53,7 @@ class UserController {
       res.writeHead(400);
       return res.end("body does not contain required fields");
     } catch (error) {
-      console.log(error); // todo прописать возврат ошибок в res.end()
+      errorHandler(error, res);
     }
   };
 
@@ -83,7 +83,7 @@ class UserController {
       res.writeHead(400);
       return res.end(`userId=${id} is invalid`);
     } catch (error) {
-      console.log(error); // todo прописать возврат ошибок в res.end()
+      errorHandler(error, res);
     }
   };
 
@@ -107,7 +107,7 @@ class UserController {
       res.writeHead(400);
       return res.end(`userId=${id} is invalid`);
     } catch (error) {
-      console.log(error); // todo прописать возврат ошибок в res.end()
+      errorHandler(error, res);
     }
   };
 }
