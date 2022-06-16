@@ -1,5 +1,5 @@
 import { ServerResponse, IncomingMessage } from "http";
-
+import { DEFAULT_HEADERS } from "./../constants/index";
 import { userController } from "../controllers";
 
 export const router = (req: IncomingMessage, res: ServerResponse) => {
@@ -26,6 +26,6 @@ export const router = (req: IncomingMessage, res: ServerResponse) => {
     return userController.deleteUser(id, res);
   }
 
-  res.writeHead(404);
-  return res.end("resource not found");
+  res.writeHead(404, DEFAULT_HEADERS);
+  return res.end(JSON.stringify({ message: "resource not found" }));
 };

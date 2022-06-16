@@ -1,17 +1,18 @@
 import { ServerResponse, IncomingMessage } from "http";
 import { validate } from "uuid";
+import { DEFAULT_HEADERS } from "../constants";
 import { usersModel } from "../model/index";
-import { errorHandler, getRequestBody, isValidUserData } from "../utils";
+import { handleError, getRequestBody, isValidUserData } from "../utils";
 
 class UserController {
   getAllUsers = (res: ServerResponse) => {
     try {
       const users = usersModel.getAll();
 
-      res.writeHead(200, { "Content-Type": "application/json" });
+      res.writeHead(200, DEFAULT_HEADERS);
       res.end(JSON.stringify(users));
     } catch (error) {
-      errorHandler(error, res);
+      handleError(error, res);
     }
   };
 
@@ -23,18 +24,20 @@ class UserController {
         const user = usersModel.getById(id);
 
         if (user) {
-          res.writeHead(200, { "Content-Type": "application/json" });
+          res.writeHead(200, DEFAULT_HEADERS);
           return res.end(JSON.stringify(user));
         }
 
-        res.writeHead(404);
-        return res.end(`user with id=${id} doesn't exist`);
+        res.writeHead(404, DEFAULT_HEADERS);
+        return res.end(
+          JSON.stringify({ message: `user with id=${id} doesn't exist` })
+        );
       }
 
-      res.writeHead(400);
-      return res.end(`userId=${id} is invalid`);
+      res.writeHead(400, DEFAULT_HEADERS);
+      return res.end(JSON.stringify({ message: `userId=${id} is invalid` }));
     } catch (error) {
-      errorHandler(error, res);
+      handleError(error, res);
     }
   };
 
@@ -46,14 +49,18 @@ class UserController {
       if (isValidUserData(data)) {
         const user = usersModel.create(data);
 
-        res.writeHead(201, { "Content-Type": "application/json" });
+        res.writeHead(201, DEFAULT_HEADERS);
         return res.end(JSON.stringify(user));
       }
 
-      res.writeHead(400);
-      return res.end("body does not contain required fields");
+      res.writeHead(400, DEFAULT_HEADERS);
+      return res.end(
+        JSON.stringify({
+          message: "body does not contain required fields or data is invalid",
+        })
+      );
     } catch (error) {
-      errorHandler(error, res);
+      handleError(error, res);
     }
   };
 
@@ -72,18 +79,26 @@ class UserController {
         const user = usersModel.update(id, data);
 
         if (user) {
-          res.writeHead(200, { "Content-Type": "application/json" });
+          res.writeHead(200, DEFAULT_HEADERS);
           return res.end(JSON.stringify(user));
         }
 
-        res.writeHead(404);
-        return res.end(`user with id=${id} doesn't exist`);
+        res.writeHead(404, DEFAULT_HEADERS);
+        return res.end(
+          JSON.stringify({
+            message: `user with id=${id} doesn't exist`,
+          })
+        );
       }
 
-      res.writeHead(400);
-      return res.end(`userId=${id} is invalid`);
+      res.writeHead(400, DEFAULT_HEADERS);
+      return res.end(
+        JSON.stringify({
+          message: `userId=${id} is invalid`,
+        })
+      );
     } catch (error) {
-      errorHandler(error, res);
+      handleError(error, res);
     }
   };
 
@@ -100,14 +115,22 @@ class UserController {
           return res.end();
         }
 
-        res.writeHead(404);
-        return res.end(`user with id=${id} doesn't exist`);
+        res.writeHead(404, DEFAULT_HEADERS);
+        return res.end(
+          JSON.stringify({
+            message: `user with id=${id} doesn't exist`,
+          })
+        );
       }
 
-      res.writeHead(400);
-      return res.end(`userId=${id} is invalid`);
+      res.writeHead(400, DEFAULT_HEADERS);
+      return res.end(
+        JSON.stringify({
+          message: `userId=${id} is invalid`,
+        })
+      );
     } catch (error) {
-      errorHandler(error, res);
+      handleError(error, res);
     }
   };
 }
