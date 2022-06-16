@@ -4,21 +4,13 @@ import { cpus } from "os";
 import "dotenv/config";
 import { router } from "./router/index";
 
+const PORT = process.env.PORT || 5555;
 const isMulti = process.env.MODE === "multi";
 const numCPUs = cpus().length;
 
-const startServer = () => {
-  const server = http.createServer((req, res) => {
-    logRequest();
-    router(req, res);
-  });
-
-  const PORT = process.env.PORT || 5555;
-
-  server.listen(PORT, () => {
-    console.log("server started at http://localhost:" + PORT);
-  });
-};
+export const server = http.createServer((req, res) => {
+  router(req, res);
+});
 
 if (isMulti) {
   if (cluster.isPrimary) {
@@ -37,15 +29,21 @@ if (isMulti) {
       console.log(`worker ${worker.process.pid} died`);
     });
   } else {
-    startServer();
-    console.log(`Worker ${process.pid} started`);
+    const id = cluster.worker?.id;
+
+    http
+      .createServer((req, res) => {
+        console.log(`Worker: ${id}, pid:${process.pid} handle request`);
+        router(req, res);
+      })
+      .listen(PORT, () => {
+        console.log(
+          `Worker: ${id}, pid:${process.pid} started server at http://localhost:${PORT}`
+        );
+      });
   }
 } else {
-  startServer();
-}
-
-function logRequest() {
-  if (cluster.isWorker) {
-    console.log(`Worker ${process.pid} handle request`);
-  }
+  server.listen(PORT, () => {
+    console.log(`server started at http://localhost:${PORT}`);
+  });
 }
