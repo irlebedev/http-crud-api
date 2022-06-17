@@ -7,7 +7,8 @@
     "start:dev": "nodemon",
     "start:prod": "tsc && node dist/index.js",
     "start:multi": "cross-env MODE=multi nodemon",
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "repository": {
     "type": "git",

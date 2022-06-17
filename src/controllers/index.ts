@@ -2,7 +2,12 @@ import { ServerResponse, IncomingMessage } from "http";
 import { validate } from "uuid";
 import { DEFAULT_HEADERS } from "../constants";
 import { usersModel } from "../model/index";
-import { handleError, getRequestBody, isValidUserData } from "../utils";
+import {
+  handleError,
+  getRequestBody,
+  isValidUserData,
+  isOnlyValidKeysInUserData,
+} from "../utils";
 
 class UserController {
   getAllUsers = (res: ServerResponse) => {
@@ -76,17 +81,26 @@ class UserController {
         const body = await getRequestBody(req);
         const data = JSON.parse(String(body));
 
-        const user = usersModel.update(id, data);
+        if (isOnlyValidKeysInUserData(data)) {
+          const user = usersModel.update(id, data);
 
-        if (user) {
-          res.writeHead(200, DEFAULT_HEADERS);
-          return res.end(JSON.stringify(user));
+          if (user) {
+            res.writeHead(200, DEFAULT_HEADERS);
+            return res.end(JSON.stringify(user));
+          }
+
+          res.writeHead(404, DEFAULT_HEADERS);
+          return res.end(
+            JSON.stringify({
+              message: `user with id=${id} doesn't exist`,
+            })
+          );
         }
 
-        res.writeHead(404, DEFAULT_HEADERS);
+        res.writeHead(400, DEFAULT_HEADERS);
         return res.end(
           JSON.stringify({
-            message: `user with id=${id} doesn't exist`,
+            message: "data is invalid",
           })
         );
       }

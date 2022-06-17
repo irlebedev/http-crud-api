@@ -19,6 +19,10 @@ const userDataToUpdate = {
   age: 33,
 };
 
+afterAll(async () => {
+  server.close();
+});
+
 describe("Get all records with a GET api/users request", () => {
   it("should return an empty array at start", async () => {
     const res = await request(server).get("/api/users");

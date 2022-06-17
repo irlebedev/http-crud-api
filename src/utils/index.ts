@@ -18,13 +18,30 @@ export const getRequestBody = (req: IncomingMessage) => {
 };
 
 export const isOnlyValidKeysInUserData = (data: any) => {
-  const validKeys = ["username", "age", "hobbies"];
+  const validKeysMap = {
+    username: "string",
+    age: "number",
+    hobbies: (value: unknown) =>
+      Array.isArray(value) &&
+      value.every((item: unknown) => typeof item === "string"),
+  };
+
   const dataKeys = Object.getOwnPropertyNames(data);
 
   return dataKeys
     .reduce((result: boolean[], key: string) => {
+      const validKeys = Object.keys(validKeysMap);
       if (validKeys.includes(key)) {
-        result.push(true);
+        if (
+          (typeof (validKeysMap as any)[key] === "string" &&
+            (validKeysMap as any)[key] === typeof data[key]) ||
+          (typeof (validKeysMap as any)[key] === "function" &&
+            (validKeysMap as any)[key](data[key]))
+        ) {
+          result.push(true);
+        } else {
+          result.push(false);
+        }
       } else {
         result.push(false);
       }
@@ -34,14 +51,7 @@ export const isOnlyValidKeysInUserData = (data: any) => {
 };
 
 export const isValidUserData = (data: any): data is UserData => {
-  if (
-    typeof data.username === "string" &&
-    typeof data.age === "number" &&
-    Array.isArray(data.hobbies) &&
-    (data.hobbies.every((hobbie: unknown) => typeof hobbie === "string") ||
-      data.hobbies.length === 0) &&
-    isOnlyValidKeysInUserData(data)
-  ) {
+  if (Object.keys(data).length === 3 && isOnlyValidKeysInUserData(data)) {
     return true;
   }
   return false;
