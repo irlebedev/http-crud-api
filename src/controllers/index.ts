@@ -7,6 +7,9 @@ import {
   getRequestBody,
   isValidUserData,
   isOnlyValidKeysInUserData,
+  getInvalidIdErrorResponse,
+  getNotExistIdErrorResponse,
+  getInvalidDataErrorResponse,
 } from "../utils";
 
 class UserController {
@@ -34,13 +37,11 @@ class UserController {
         }
 
         res.writeHead(404, DEFAULT_HEADERS);
-        return res.end(
-          JSON.stringify({ message: `user with id=${id} doesn't exist` })
-        );
+        return res.end(getNotExistIdErrorResponse(id));
       }
 
       res.writeHead(400, DEFAULT_HEADERS);
-      return res.end(JSON.stringify({ message: `userId=${id} is invalid` }));
+      return res.end(getInvalidIdErrorResponse(id));
     } catch (error) {
       handleError(error, res);
     }
@@ -59,11 +60,7 @@ class UserController {
       }
 
       res.writeHead(400, DEFAULT_HEADERS);
-      return res.end(
-        JSON.stringify({
-          message: "body does not contain required fields or data is invalid",
-        })
-      );
+      return res.end(getInvalidDataErrorResponse());
     } catch (error) {
       handleError(error, res);
     }
@@ -90,27 +87,15 @@ class UserController {
           }
 
           res.writeHead(404, DEFAULT_HEADERS);
-          return res.end(
-            JSON.stringify({
-              message: `user with id=${id} doesn't exist`,
-            })
-          );
+          return res.end(getNotExistIdErrorResponse(id));
         }
 
         res.writeHead(400, DEFAULT_HEADERS);
-        return res.end(
-          JSON.stringify({
-            message: "data is invalid",
-          })
-        );
+        return res.end(getInvalidDataErrorResponse());
       }
 
       res.writeHead(400, DEFAULT_HEADERS);
-      return res.end(
-        JSON.stringify({
-          message: `userId=${id} is invalid`,
-        })
-      );
+      return res.end(getInvalidIdErrorResponse(id));
     } catch (error) {
       handleError(error, res);
     }
@@ -130,19 +115,11 @@ class UserController {
         }
 
         res.writeHead(404, DEFAULT_HEADERS);
-        return res.end(
-          JSON.stringify({
-            message: `user with id=${id} doesn't exist`,
-          })
-        );
+        return res.end(getNotExistIdErrorResponse(id));
       }
 
       res.writeHead(400, DEFAULT_HEADERS);
-      return res.end(
-        JSON.stringify({
-          message: `userId=${id} is invalid`,
-        })
-      );
+      return res.end(getInvalidIdErrorResponse(id));
     } catch (error) {
       handleError(error, res);
     }

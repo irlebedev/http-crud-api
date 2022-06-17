@@ -62,3 +62,18 @@ export const handleError = (error: unknown, res: ServerResponse) => {
   res.writeHead(500, DEFAULT_HEADERS);
   return res.end(JSON.stringify({ message: "internal server error" }));
 };
+
+export const getInvalidIdErrorResponse = (id: string) =>
+  JSON.stringify({
+    message: `userId=${id} is invalid`,
+  });
+
+export const getNotExistIdErrorResponse = (id: string) =>
+  JSON.stringify({
+    message: `user with id=${id} doesn't exist`,
+  });
+
+export const getInvalidDataErrorResponse = () =>
+  JSON.stringify({
+    message: "data is invalid",
+  });
